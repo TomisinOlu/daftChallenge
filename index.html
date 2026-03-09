@@ -1,807 +1,148 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-
-<meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.33">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
-
-<title>DAFT Package Challenge</title>
-<style>
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-ul.task-list{list-style: none;}
-ul.task-list li input[type="checkbox"] {
-  width: 0.8em;
-  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
-  vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-</style>
-
-
-<script src="index_files/libs/clipboard/clipboard.min.js"></script>
-<script src="index_files/libs/quarto-html/quarto.js" type="module"></script>
-<script src="index_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="index_files/libs/quarto-html/popper.min.js"></script>
-<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="index_files/libs/quarto-html/anchor.min.js"></script>
-<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="index_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="index_files/libs/bootstrap/bootstrap-bb462d781dde1847d9e3ccf7736099dd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-
-
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Scurvy Story: Three DAGs</title>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --text: #212529;
+      --muted: #6c757d;
+      --accent: #0d6efd;
+      --border: #dee2e6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 1rem;
+    }
+    h1 {
+      font-size: 1.875rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      font-size: 1.0625rem;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      font-weight: 400;
+    }
+    .story-block {
+      margin-bottom: 3rem;
+    }
+    .story-block p {
+      margin: 0 0 1rem;
+    }
+    .story-block p:last-child {
+      margin-bottom: 0;
+    }
+    h2 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+    }
+    section.dag-section {
+      margin-bottom: 4rem;
+      padding-bottom: 4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    section.dag-section:last-of-type {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    section.dag-section p {
+      margin: 0 0 1.25rem;
+      max-width: 65ch;
+    }
+    figure {
+      margin: 2rem 0;
+      text-align: center;
+    }
+    figure img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    figcaption {
+      font-size: 0.875rem;
+      color: var(--muted);
+      margin-top: 0.75rem;
+      font-weight: 500;
+    }
+    .timeline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin: 2.5rem 0 3rem;
+      flex-wrap: wrap;
+    }
+    .timeline-item {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .timeline-arrow {
+      color: var(--muted);
+      font-size: 1.25rem;
+      font-weight: 300;
+    }
+  </style>
 </head>
+<body>
+  <h1>The Scurvy Story</h1>
+  <p class="subtitle">How we lost and rediscovered the cure, told in three causal models.</p>
 
-<body class="fullcontent quarto-light">
-
-<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">DAFT Package Challenge</h1>
-<p class="subtitle lead">Recreating the Scurvy DAGs with Beautiful Visualizations</p>
-</div>
-
-
-
-<div class="quarto-title-meta">
-
-    
-  
-    
+  <div class="story-block">
+    <h2>The story</h2>
+    <p>Scurvy devastated sailors on long voyages: weakness, bleeding gums, and death. In <strong>1747</strong>, James Lind showed that <strong>lemons</strong> prevented scurvy, a correct finding, but the <em>reason</em> was unknown. Later, people decided it was <strong>acid</strong> killing the "bacteria" that caused scurvy. That wrong belief led to replacing lemons with limes or vinegar, and scurvy returned. Only in <strong>1928</strong> was the true cause found: <strong>vitamin C</strong> (ascorbic acid). The three directed acyclic graphs below show how the assumed data-generating process changed over time.</p>
   </div>
-  
 
+  <div class="timeline" aria-hidden="true">
+    <span class="timeline-item">1747</span>
+    <span class="timeline-arrow">→</span>
+    <span class="timeline-item">Misguided</span>
+    <span class="timeline-arrow">→</span>
+    <span class="timeline-item">1928</span>
+  </div>
 
-</header>
+  <section class="dag-section">
+    <h2>DAG 1: 1747. Lemons prevent scurvy (correct but incomplete)</h2>
+    <p>Lind's experiment showed that lemons prevented scurvy. The causal view was simply: lemons → scurvy prevention. Correct as far as it went, but the mechanism was missing.</p>
+    <figure>
+      <img src="dag1-1747.png" alt="DAG: Lemons → Scurvy Prevention">
+      <figcaption>1747: Lemons prevent scurvy (correct but incomplete)</figcaption>
+    </figure>
+  </section>
 
+  <section class="dag-section">
+    <h2>DAG 2: The misguided belief. Acid kills bacteria (wrong)</h2>
+    <p>People came to believe acid killed the bacteria that caused scurvy. The assumed chain was: acid → bacteria death → scurvy prevention. That misunderstanding led to dropping lemons for cheaper acids and brought scurvy back.</p>
+    <figure>
+      <img src="dag2-misguided.png" alt="DAG: Acid → Bacteria Death → Scurvy Prevention">
+      <figcaption>Misguided belief: Acid kills bacteria (wrong)</figcaption>
+    </figure>
+  </section>
 
-<section id="daft-package-challenge---recreating-the-scurvy-dags" class="level1">
-<h1>🎨 DAFT Package Challenge - Recreating the Scurvy DAGs</h1>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-📊 Challenge Requirements In Section <a href="#student-analysis-section">Student Analysis Section</a>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ul>
-<li>Recreate all three scurvy DAGs using DAFT programming</li>
-<li>Optional: Demonstrate understanding of DAFT customization options</li>
-</ul>
-</div>
-</div>
-<section id="the-problem-mastering-probabilistic-graphical-models-with-daft" class="level2">
-<h2 class="anchored" data-anchor-id="the-problem-mastering-probabilistic-graphical-models-with-daft">The Problem: Mastering Probabilistic Graphical Models with DAFT</h2>
-<p><strong>Core Question:</strong> How can we use the DAFT package to create visually appealing Directed Acyclic Graphs (DAGs) that tell a compelling data story?</p>
-<p><strong>The Challenge:</strong> You’ll recreate three historical DAGs depicting the fascinating story of how we lost and rediscovered the cure to scurvy. This challenge teaches you to use DAFT for creating professional-quality probabilistic graphical models.</p>
-<p><strong>Our Approach:</strong> We’ll work through the three different understandings of the scurvy data generating process, learning DAFT customization techniques while exploring a crucial moment in medical history.</p>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-⚠️ AI Partnership Required
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>This challenge pushes boundaries intentionally. You’ll tackle problems that normally require weeks of study, but with Cursor AI as your partner (and your brain keeping it honest), you can accomplish more than you thought possible.</p>
-<p><strong>The new reality:</strong> The four stages of competence are Ignorance → Awareness → Learning → Mastery. AI lets us produce Mastery-level work while operating primarily in the Awareness stage. I focus on awareness training, you leverage AI for execution, and together we create outputs that used to require years of dedicated study.</p>
-</div>
-</div>
-</section>
-<section id="the-scurvy-story-a-data-science-tragedy" class="level2">
-<h2 class="anchored" data-anchor-id="the-scurvy-story-a-data-science-tragedy">The Scurvy Story: A Data Science Tragedy</h2>
-<p>Scurvy was a devastating disease that affected sailors on long voyages. The cure was discovered in 1747, but due to a misunderstanding about the cause, the cure was lost for over 150 years. The story involves three different understandings of the data generating process:</p>
-<ol type="1">
-<li><strong>1747 Understanding:</strong> Lemons prevent scurvy (correct but incomplete!)</li>
-<li><strong>Misguided Belief:</strong> Acid kills bacteria that causes scurvy (wrong!)</li>
-<li><strong>1928 Understanding:</strong> Vitamin C prevents scurvy (the real mechanism)</li>
-</ol>
-</section>
-<section id="environment-setup" class="level2">
-<h2 class="anchored" data-anchor-id="environment-setup">Environment Setup</h2>
-<p>First, let’s install the DAFT package and set up our environment:</p>
-<div id="setup-environment" class="cell" data-message="false" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install DAFT package (run this in terminal if not already installed)</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># pip install 'daft-pgm'</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> daft</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up plotting parameters for better quality</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'figure.dpi'</span>] <span class="op">=</span> <span class="dv">150</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'savefig.dpi'</span>] <span class="op">=</span> <span class="dv">300</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DAFT package imported successfully!"</span>)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Ready to create beautiful DAGs!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>DAFT package imported successfully!
-Ready to create beautiful DAGs!</code></pre>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-💡 Understanding DAFT
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>DAFT (Directed Acyclic Factor Graphs Toolkit)</strong> is a Python package for creating probabilistic graphical models. It’s particularly useful for:</p>
-<ul>
-<li>Creating Directed Acyclic Graphs (DAGs)</li>
-<li>Visualizing causal relationships</li>
-<li>Communicating data generating processes</li>
-<li>Creating publication-quality figures</li>
-</ul>
-<p><strong>Key DAFT Concepts:</strong></p>
-<ul>
-<li><strong>Nodes:</strong> Represent variables or factors</li>
-<li><strong>Edges:</strong> Show relationships between variables</li>
-<li><strong>Plates:</strong> Indicate repeated structures</li>
-<li><strong>Styling:</strong> Customize colors, shapes, and formatting</li>
-</ul>
-</div>
-</div>
-</section>
-<section id="the-three-dags-your-mission" class="level2">
-<h2 class="anchored" data-anchor-id="the-three-dags-your-mission">The Three DAGs: Your Mission</h2>
-<p>Your task is to recreate these three historical DAGs using DAFT, making them visually appealing and professionally formatted.</p>
-<section id="dag-1-the-1747-understanding-correct-but-incomplete" class="level3">
-<h3 class="anchored" data-anchor-id="dag-1-the-1747-understanding-correct-but-incomplete">DAG 1: The 1747 Understanding (Correct but Incomplete)</h3>
-<p><strong>Historical Context:</strong> In 1747, James Lind discovered that lemons prevent scurvy through a controlled experiment. However, the understanding was incomplete - they knew lemons worked but not why.</p>
-<p><strong>Your Task:</strong> Recreate this DAG showing the relationship between lemons and scurvy prevention.</p>
-<p><strong>Reference Image:</strong> <img src="https://raw.githubusercontent.com/flyaflya/persuasive/642288ea5f79050c05801c3d127084ac0f361a01/images/scurvy2.png" class="img-fluid"></p>
-<div id="dag-1-1747" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Replace this placeholder with your DAFT code</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a DAG showing the 1747 understanding: Lemons → Scurvy Prevention</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Your code here - recreate the DAG from the reference image</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Use DAFT to create nodes and edges that match the visual structure</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Customize colors and styling to make it professional</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="dag-2-the-misguided-belief-wrong-understanding" class="level3">
-<h3 class="anchored" data-anchor-id="dag-2-the-misguided-belief-wrong-understanding">DAG 2: The Misguided Belief (Wrong Understanding)</h3>
-<p><strong>Historical Context:</strong> Over time, people came to believe it was the acid in lemons that killed bacteria which was causing scurvy. This led to lemons being replaced by limes (cheaper but less Vitamin C) or just using acids like vinegar, causing scurvy to return.</p>
-<p><strong>Your Task:</strong> Recreate this DAG showing the incorrect understanding of the data generating process.</p>
-<p><strong>Reference Image:</strong> <img src="https://raw.githubusercontent.com/flyaflya/persuasive/8aaffd0a3c967d0a26f506232f998130847be3e8/images/scurvy.png" class="img-fluid"></p>
-<div id="dag-2-misguided" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Replace this placeholder with your DAFT code</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a DAG showing the misguided belief: Acid → Bacteria Death → Scurvy Prevention</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Your code here - recreate the DAG from the reference image</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># This DAG should show the incorrect causal chain</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Use different colors or styling to indicate this is the wrong understanding</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="dag-3-the-1928-understanding-complete-and-correct" class="level3">
-<h3 class="anchored" data-anchor-id="dag-3-the-1928-understanding-complete-and-correct">DAG 3: The 1928 Understanding (Complete and Correct)</h3>
-<p><strong>Historical Context:</strong> In 1928, the true mechanism was discovered - it was Vitamin C (ascorbic acid) that prevented scurvy. This complete understanding finally explained why lemons worked and why the acid theory was wrong.</p>
-<p><strong>Your Task:</strong> Recreate this DAG showing the complete and correct understanding of the scurvy data generating process.</p>
-<p><strong>Reference Image:</strong> <img src="https://raw.githubusercontent.com/flyaflya/persuasive/main/images/scurvy3.png" class="img-fluid"></p>
-<div id="dag-3-1928" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: Replace this placeholder with your DAFT code</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a DAG showing the 1928 understanding: Vitamin C → Scurvy Prevention</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Your code here - recreate the DAG from the reference image</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># This should be the most complete and accurate representation</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Use professional styling that would be suitable for a scientific publication</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-</section>
-<section id="student-analysis-section" class="level2">
-<h2 class="anchored" data-anchor-id="student-analysis-section">Student Requirements Section: Mastering DAFT Visualization</h2>
-<p><strong>Your Task:</strong> Demonstrate your mastery of DAFT through comprehensive recreation of the three scurvy DAGs and thoughtful analysis. The bulk of your grade comes from successfully recreating the DAGs and answering the discussion questions.</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-📊 Challenge Requirements
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>Complete all DAG recreation sections:</strong></p>
-<ol type="1">
-<li><strong>DAG 1 (1747):</strong> Lemons prevent scurvy - correct but incomplete</li>
-<li><strong>DAG 2 (Misguided):</strong> Acid kills bacteria - wrong understanding<br>
-</li>
-<li><strong>DAG 3 (1928):</strong> Vitamin C prevents scurvy - complete and correct</li>
-<li><strong>Optional:</strong> Add a little professional styling to the DAGs to make them more visually appealing (example: use nice fill colors and/or enclose the text in the ellipse completely).</li>
-</ol>
-</div>
-</div>
-<section id="professional-quality-standards" class="level3">
-<h3 class="anchored" data-anchor-id="professional-quality-standards">Professional Quality Standards</h3>
-<p><strong>Your DAGs should:</strong></p>
-<ul>
-<li>(90% grade): Accurately recreate the reference images</li>
-<li>(100% grade): Add professional colors and possibly play with shapes to make it more visually appealing (example: use nice fill colors and/or enclose the text in the ellipse completely). Erase everything but the story of scurvy and the three DAGs</li>
-<li>Include clear, readable labels</li>
-<li>Demonstrate understanding of DAFT customization options</li>
-<li>Be suitable for a business or academic audience</li>
-</ul>
-</section>
-<section id="example-professional-daft-node-styling" class="level3">
-<h3 class="anchored" data-anchor-id="example-professional-daft-node-styling">Example: Professional DAFT Node Styling</h3>
-<p>Here’s an example (see <a href="#fig-example-node" class="quarto-xref">Figure&nbsp;1</a>) of how to create a professionally styled node in DAFT with nice captions and references to the figure:</p>
-<div id="cell-fig-example-node" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> daft</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a PGM object</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>pgm <span class="op">=</span> daft.PGM(dpi<span class="op">=</span><span class="dv">150</span>, alternate_style<span class="op">=</span><span class="st">"outer"</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Example of a professionally styled node</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>pgm.add_node(<span class="st">"vitamin_c"</span>, <span class="st">"Vitamin C</span><span class="ch">\n</span><span class="st">Intake"</span> <span class="op">+</span> <span class="vs">r" </span><span class="dv">$</span><span class="kw">(</span><span class="vs">X</span><span class="kw">)</span><span class="dv">$</span><span class="vs">"</span>, <span class="dv">1</span>, <span class="dv">1</span>, aspect <span class="op">=</span> <span class="dv">3</span>, scale <span class="op">=</span> <span class="fl">1.1</span>,</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>             plot_params<span class="op">=</span>{</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'facecolor'</span>: <span class="st">'lightgreen'</span>, </span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'edgecolor'</span>: <span class="st">'darkgreen'</span>, </span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'linewidth'</span>: <span class="dv">2</span>,</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'alpha'</span>: <span class="fl">0.8</span>,</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>             })</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>pgm.add_node(<span class="st">"health"</span>, <span class="st">"Healthiness</span><span class="ch">\n</span><span class="st">"</span><span class="op">+</span><span class="vs">r" </span><span class="dv">$</span><span class="kw">(</span><span class="vs">Y</span><span class="kw">)</span><span class="dv">$</span><span class="vs">"</span>, <span class="fl">3.25</span>, <span class="dv">1</span>, aspect <span class="op">=</span> <span class="dv">3</span>, scale <span class="op">=</span> <span class="fl">1.1</span>,</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>             plot_params<span class="op">=</span>{</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'facecolor'</span>: <span class="st">'thistle'</span>, </span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'edgecolor'</span>: <span class="st">'purple'</span>, </span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'linewidth'</span>: <span class="dv">2</span>,</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'alpha'</span>: <span class="fl">0.8</span>,</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>             })</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>pgm.add_edge(<span class="st">"vitamin_c"</span>, <span class="st">"health"</span>)</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>pgm.render()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<div id="fig-example-node" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-example-node-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="index_files/figure-html/fig-example-node-output-1.png" width="514" height="118" class="figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example-node-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Example: Professional DAFT Node Styling
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<p><strong>Key Styling Parameters:</strong></p>
-<ul>
-<li><code>facecolor</code>: Background color of the node</li>
-<li><code>edgecolor</code>: Border color of the node<br>
-</li>
-<li><code>linewidth</code>: Thickness of the border</li>
-<li><code>alpha</code>: Transparency (0.0 to 1.0)</li>
-<li><code>fontsize</code>: Size of text inside the node</li>
-<li><code>aspect</code>: Width/height aspect ratio of the node (default: 1.0)</li>
-<li><code>scale</code>: Height of the node (default: 1.0)</li>
-</ul>
-</section>
-</section>
-<section id="getting-started-repository-setup" class="level2">
-<h2 class="anchored" data-anchor-id="getting-started-repository-setup">Getting Started: Repository Setup 🚀</h2>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-📁 Getting Started
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>Step 1:</strong> Create a new repository in your GitHub account named “daftChallenge” (forked from <a href="https://github.com/flyaflya/daftChallenge">https://github.com/flyaflya/daftChallenge</a>)</p>
-<p><strong>Step 2:</strong> Clone your repository locally using Cursor (or VS Code)</p>
-<p><strong>Step 3:</strong> Be sure to install DAFT in your environment: <code>pip install 'daft-pgm'</code>.</p>
-<p><strong>Step 4:</strong> Modify your local copy of this <code>index.qmd</code> file to complete the challenge and get it to be a github pages website.</p>
-</div>
-</div>
-<section id="getting-started-tips" class="level3">
-<h3 class="anchored" data-anchor-id="getting-started-tips">Getting Started Tips</h3>
-</section>
-</section>
-<section id="key-daft-resources" class="level2">
-<h2 class="anchored" data-anchor-id="key-daft-resources">Key DAFT Resources</h2>
-<p><strong>Essential DAFT Documentation:</strong></p>
-<ul>
-<li><a href="https://docs.daft-pgm.org/en/latest/">DAFT Documentation</a></li>
-<li><a href="https://docs.daft-pgm.org/en/latest/examples/">DAFT Examples</a></li>
-<li><a href="https://matplotlib.org/stable/gallery/color/named_colors.html">Matplotlib Colors</a></li>
-</ul>
-<p><strong>Key DAFT Parameters to Explore:</strong></p>
-<ul>
-<li><code>plot_params</code>: Dictionary of matplotlib parameters for styling</li>
-<li><code>aspect</code>: Controls node width (default: 1.0)</li>
-<li><code>scale</code>: Controls node size (default: 1.0)</li>
-<li><code>fontsize</code>: Text size in the node</li>
-<li><code>alternate</code>: Use alternative node shape (True/False)</li>
-</ul>
-</section>
-<section id="grading-rubric" class="level2">
-<h2 class="anchored" data-anchor-id="grading-rubric">Grading Rubric 🎓</h2>
-<p><strong>90% Grade:</strong> Successfully recreate all 3 DAGs with good visual quality.</p>
-<p><strong>100% Grade:</strong> Recreate all 3 DAGs with enhanced quality and visual aesthetics (example: use nice fill colors and/or enclose the text in the ellipse completely).</p>
-</section>
-<section id="submission-checklist" class="level2">
-<h2 class="anchored" data-anchor-id="submission-checklist">Submission Checklist ✅</h2>
-<p><strong>Minimum Requirements (Required for Any Points):</strong></p>
-<ul class="task-list">
-<li><label><input type="checkbox">Created repository named “daftChallenge” in your GitHub account (forked from <a href="https://github.com/flyaflya/daftChallenge">https://github.com/flyaflya/daftChallenge</a>)</label></li>
-<li><label><input type="checkbox">Cloned repository locally using Cursor (or VS Code)</label></li>
-<li><label><input type="checkbox">Installed DAFT package successfully</label></li>
-<li><label><input type="checkbox">Document rendered to HTML successfully</label></li>
-<li><label><input type="checkbox">HTML files uploaded to your repository</label></li>
-<li><label><input type="checkbox">GitHub Pages enabled and working</label></li>
-<li><label><input type="checkbox">Site accessible at <code>https://[your-username].github.io/daftChallenge/</code></label></li>
-</ul>
-<p><strong>90% Grade Requirements:</strong></p>
-<ul class="task-list">
-<li><label><input type="checkbox">Successfully recreate all 3 DAGs</label></li>
-<li><label><input type="checkbox">Good visual quality with appropriate styling</label></li>
-</ul>
-<p><strong>100% Grade Requirements:</strong></p>
-<ul class="task-list">
-<li><label><input type="checkbox">All DAG recreations completed with professional quality</label></li>
-<li><label><input type="checkbox">Erase everything but the story of scurvy and the three DAGs (make it a nice concise narrative about scurvy)</label></li>
-</ul>
-</section>
-</section>
-
-</main>
-<!-- /main column -->
-<script id="quarto-html-after-body" type="application/javascript">
-  window.document.addEventListener("DOMContentLoaded", function (event) {
-    const icon = "";
-    const anchorJS = new window.AnchorJS();
-    anchorJS.options = {
-      placement: 'right',
-      icon: icon
-    };
-    anchorJS.add('.anchored');
-    const isCodeAnnotation = (el) => {
-      for (const clz of el.classList) {
-        if (clz.startsWith('code-annotation-')) {                     
-          return true;
-        }
-      }
-      return false;
-    }
-    const onCopySuccess = function(e) {
-      // button target
-      const button = e.trigger;
-      // don't keep focus
-      button.blur();
-      // flash "checked"
-      button.classList.add('code-copy-button-checked');
-      var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
-      let tooltip;
-      if (window.bootstrap) {
-        button.setAttribute("data-bs-toggle", "tooltip");
-        button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
-        tooltip = new bootstrap.Tooltip(button, 
-          { trigger: "manual", 
-            customClass: "code-copy-button-tooltip",
-            offset: [0, -8]});
-        tooltip.show();    
-      }
-      setTimeout(function() {
-        if (tooltip) {
-          tooltip.hide();
-          button.removeAttribute("data-bs-title");
-          button.removeAttribute("data-bs-toggle");
-          button.removeAttribute("data-bs-placement");
-        }
-        button.setAttribute("title", currentTitle);
-        button.classList.remove('code-copy-button-checked');
-      }, 1000);
-      // clear code selection
-      e.clearSelection();
-    }
-    const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
-        }
-        return codeEl.innerText;
-    }
-    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-      text: getTextToCopy
-    });
-    clipboard.on('success', onCopySuccess);
-    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-        text: getTextToCopy,
-        container: window.document.getElementById('quarto-embedded-source-code-modal')
-      });
-      clipboardModal.on('success', onCopySuccess);
-    }
-      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-      var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
-      var isInternal = (href) => {
-          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-      }
-      // Inspect non-navigation links and adorn them if external
-     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-      for (var i=0; i<links.length; i++) {
-        const link = links[i];
-        if (!isInternal(link.href)) {
-          // undo the damage that might have been done by quarto-nav.js in the case of
-          // links that we want to consider external
-          if (link.dataset.originalHref !== undefined) {
-            link.href = link.dataset.originalHref;
-          }
-        }
-      }
-    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-      const config = {
-        allowHTML: true,
-        maxWidth: 500,
-        delay: 100,
-        arrow: false,
-        appendTo: function(el) {
-            return el.parentElement;
-        },
-        interactive: true,
-        interactiveBorder: 10,
-        theme: 'quarto',
-        placement: 'bottom-start',
-      };
-      if (contentFn) {
-        config.content = contentFn;
-      }
-      if (onTriggerFn) {
-        config.onTrigger = onTriggerFn;
-      }
-      if (onUntriggerFn) {
-        config.onUntrigger = onUntriggerFn;
-      }
-      window.tippy(el, config); 
-    }
-    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-    for (var i=0; i<noterefs.length; i++) {
-      const ref = noterefs[i];
-      tippyHover(ref, function() {
-        // use id or data attribute instead here
-        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-        try { href = new URL(href).hash; } catch {}
-        const id = href.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note) {
-          return note.innerHTML;
-        } else {
-          return "";
-        }
-      });
-    }
-    const xrefs = window.document.querySelectorAll('a.quarto-xref');
-    const processXRef = (id, note) => {
-      // Strip column container classes
-      const stripColumnClz = (el) => {
-        el.classList.remove("page-full", "page-columns");
-        if (el.children) {
-          for (const child of el.children) {
-            stripColumnClz(child);
-          }
-        }
-      }
-      stripColumnClz(note)
-      if (id === null || id.startsWith('sec-')) {
-        // Special case sections, only their first couple elements
-        const container = document.createElement("div");
-        if (note.children && note.children.length > 2) {
-          container.appendChild(note.children[0].cloneNode(true));
-          for (let i = 1; i < note.children.length; i++) {
-            const child = note.children[i];
-            if (child.tagName === "P" && child.innerText === "") {
-              continue;
-            } else {
-              container.appendChild(child.cloneNode(true));
-              break;
-            }
-          }
-          if (window.Quarto?.typesetMath) {
-            window.Quarto.typesetMath(container);
-          }
-          return container.innerHTML
-        } else {
-          if (window.Quarto?.typesetMath) {
-            window.Quarto.typesetMath(note);
-          }
-          return note.innerHTML;
-        }
-      } else {
-        // Remove any anchor links if they are present
-        const anchorLink = note.querySelector('a.anchorjs-link');
-        if (anchorLink) {
-          anchorLink.remove();
-        }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(note);
-        }
-        if (note.classList.contains("callout")) {
-          return note.outerHTML;
-        } else {
-          return note.innerHTML;
-        }
-      }
-    }
-    for (var i=0; i<xrefs.length; i++) {
-      const xref = xrefs[i];
-      tippyHover(xref, undefined, function(instance) {
-        instance.disable();
-        let url = xref.getAttribute('href');
-        let hash = undefined; 
-        if (url.startsWith('#')) {
-          hash = url;
-        } else {
-          try { hash = new URL(url).hash; } catch {}
-        }
-        if (hash) {
-          const id = hash.replace(/^#\/?/, "");
-          const note = window.document.getElementById(id);
-          if (note !== null) {
-            try {
-              const html = processXRef(id, note.cloneNode(true));
-              instance.setContent(html);
-            } finally {
-              instance.enable();
-              instance.show();
-            }
-          } else {
-            // See if we can fetch this
-            fetch(url.split('#')[0])
-            .then(res => res.text())
-            .then(html => {
-              const parser = new DOMParser();
-              const htmlDoc = parser.parseFromString(html, "text/html");
-              const note = htmlDoc.getElementById(id);
-              if (note !== null) {
-                const html = processXRef(id, note);
-                instance.setContent(html);
-              } 
-            }).finally(() => {
-              instance.enable();
-              instance.show();
-            });
-          }
-        } else {
-          // See if we can fetch a full url (with no hash to target)
-          // This is a special case and we should probably do some content thinning / targeting
-          fetch(url)
-          .then(res => res.text())
-          .then(html => {
-            const parser = new DOMParser();
-            const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.querySelector('main.content');
-            if (note !== null) {
-              // This should only happen for chapter cross references
-              // (since there is no id in the URL)
-              // remove the first header
-              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-                note.children[0].remove();
-              }
-              const html = processXRef(null, note);
-              instance.setContent(html);
-            } 
-          }).finally(() => {
-            instance.enable();
-            instance.show();
-          });
-        }
-      }, function(instance) {
-      });
-    }
-        let selectedAnnoteEl;
-        const selectorForAnnotation = ( cell, annotation) => {
-          let cellAttr = 'data-code-cell="' + cell + '"';
-          let lineAttr = 'data-code-annotation="' +  annotation + '"';
-          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-          return selector;
-        }
-        const selectCodeLines = (annoteEl) => {
-          const doc = window.document;
-          const targetCell = annoteEl.getAttribute("data-target-cell");
-          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-          const lineIds = lines.map((line) => {
-            return targetCell + "-" + line;
-          })
-          let top = null;
-          let height = null;
-          let parent = null;
-          if (lineIds.length > 0) {
-              //compute the position of the single el (top and bottom and make a div)
-              const el = window.document.getElementById(lineIds[0]);
-              top = el.offsetTop;
-              height = el.offsetHeight;
-              parent = el.parentElement.parentElement;
-            if (lineIds.length > 1) {
-              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-              height = bottom - top;
-            }
-            if (top !== null && height !== null && parent !== null) {
-              // cook up a div (if necessary) and position it 
-              let div = window.document.getElementById("code-annotation-line-highlight");
-              if (div === null) {
-                div = window.document.createElement("div");
-                div.setAttribute("id", "code-annotation-line-highlight");
-                div.style.position = 'absolute';
-                parent.appendChild(div);
-              }
-              div.style.top = top - 2 + "px";
-              div.style.height = height + 4 + "px";
-              div.style.left = 0;
-              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-              if (gutterDiv === null) {
-                gutterDiv = window.document.createElement("div");
-                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-                gutterDiv.style.position = 'absolute';
-                const codeCell = window.document.getElementById(targetCell);
-                const gutter = codeCell.querySelector('.code-annotation-gutter');
-                gutter.appendChild(gutterDiv);
-              }
-              gutterDiv.style.top = top - 2 + "px";
-              gutterDiv.style.height = height + 4 + "px";
-            }
-            selectedAnnoteEl = annoteEl;
-          }
-        };
-        const unselectCodeLines = () => {
-          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-          elementsIds.forEach((elId) => {
-            const div = window.document.getElementById(elId);
-            if (div) {
-              div.remove();
-            }
-          });
-          selectedAnnoteEl = undefined;
-        };
-          // Handle positioning of the toggle
-      window.addEventListener(
-        "resize",
-        throttle(() => {
-          elRect = undefined;
-          if (selectedAnnoteEl) {
-            selectCodeLines(selectedAnnoteEl);
-          }
-        }, 10)
-      );
-      function throttle(fn, ms) {
-      let throttle = false;
-      let timer;
-        return (...args) => {
-          if(!throttle) { // first call gets through
-              fn.apply(this, args);
-              throttle = true;
-          } else { // all the others get throttled
-              if(timer) clearTimeout(timer); // cancel #2
-              timer = setTimeout(() => {
-                fn.apply(this, args);
-                timer = throttle = false;
-              }, ms);
-          }
-        };
-      }
-        // Attach click handler to the DT
-        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-        for (const annoteDlNode of annoteDls) {
-          annoteDlNode.addEventListener('click', (event) => {
-            const clickedEl = event.target;
-            if (clickedEl !== selectedAnnoteEl) {
-              unselectCodeLines();
-              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-              if (activeEl) {
-                activeEl.classList.remove('code-annotation-active');
-              }
-              selectCodeLines(clickedEl);
-              clickedEl.classList.add('code-annotation-active');
-            } else {
-              // Unselect the line
-              unselectCodeLines();
-              clickedEl.classList.remove('code-annotation-active');
-            }
-          });
-        }
-    const findCites = (el) => {
-      const parentEl = el.parentElement;
-      if (parentEl) {
-        const cites = parentEl.dataset.cites;
-        if (cites) {
-          return {
-            el,
-            cites: cites.split(' ')
-          };
-        } else {
-          return findCites(el.parentElement)
-        }
-      } else {
-        return undefined;
-      }
-    };
-    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-    for (var i=0; i<bibliorefs.length; i++) {
-      const ref = bibliorefs[i];
-      const citeInfo = findCites(ref);
-      if (citeInfo) {
-        tippyHover(citeInfo.el, function() {
-          var popup = window.document.createElement('div');
-          citeInfo.cites.forEach(function(cite) {
-            var citeDiv = window.document.createElement('div');
-            citeDiv.classList.add('hanging-indent');
-            citeDiv.classList.add('csl-entry');
-            var biblioDiv = window.document.getElementById('ref-' + cite);
-            if (biblioDiv) {
-              citeDiv.innerHTML = biblioDiv.innerHTML;
-            }
-            popup.appendChild(citeDiv);
-          });
-          return popup.innerHTML;
-        });
-      }
-    }
-  });
-  </script>
-</div> <!-- /content -->
-
-
-
-
-</body></html>
+  <section class="dag-section">
+    <h2>DAG 3: 1928. Vitamin C prevents scurvy (complete and correct)</h2>
+    <p>In 1928 the real mechanism was identified: <strong>vitamin C</strong> prevents scurvy. That explains why lemons worked (they contain vitamin C) and why the acid-only story failed.</p>
+    <figure>
+      <img src="dag3-1928.png" alt="DAG: Vitamin C → Scurvy Prevention">
+      <figcaption>1928: Vitamin C prevents scurvy (complete and correct)</figcaption>
+    </figure>
+  </section>
+</body>
+</html>
